@@ -4,6 +4,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +22,15 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(AlipayProperties.class)
 public class AlipayAutoConfiguration {
 
+    private final AlipayProperties aliPayProperties;
+
     @Autowired
-    private AlipayProperties aliPayProperties;
+    public AlipayAutoConfiguration(AlipayProperties aliPayProperties) {
+        this.aliPayProperties = aliPayProperties;
+    }
 
     @Bean
+    @ConditionalOnMissingBean(AlipayClient.class)
     public AlipayClient alipayClient() {
 
         return new DefaultAlipayClient(aliPayProperties.getTradeUrl(), aliPayProperties.getAppId()
