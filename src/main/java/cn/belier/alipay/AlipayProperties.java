@@ -35,10 +35,19 @@ public class AlipayProperties {
     private boolean enabled = true;
 
     /**
+     * 网关地址
+     */
+    private String tradeUrl;
+
+    /**
      * 支付宝应用ID
      */
     private String appId;
 
+    /**
+     * 签约的支付宝账号对应的支付宝唯一用户号，以2088开头的16位纯数字组成
+     */
+    private String pid;
 
     /**
      * 是否是开发环境
@@ -46,7 +55,7 @@ public class AlipayProperties {
     private boolean dev = false;
 
     /**
-     * 私钥
+     * 应用私钥
      */
     @Setter(AccessLevel.NONE)
     private String privateKey;
@@ -54,10 +63,10 @@ public class AlipayProperties {
     /**
      * 私钥所在文件 绝对路径或者以classpath:开头的类路径
      */
-    private String privateKeyPath = "classpath:/alipay/private.key";
+    private String privateKeyPath;
 
     /**
-     * 公钥
+     * 支付宝公钥
      */
     @Setter(AccessLevel.NONE)
     private String publicKey;
@@ -65,7 +74,7 @@ public class AlipayProperties {
     /**
      * 公钥所在文件 绝对路径或者以classpath:开头的类路径
      */
-    private String publicKeyPath = "classpath:/alipay/public.key";
+    private String publicKeyPath;
 
     /**
      * 字符格式
@@ -77,6 +86,25 @@ public class AlipayProperties {
      */
     private AlipaySignTypeEnum signType = AlipaySignTypeEnum.RSA2;
 
+    public String getPrivateKeyPath() {
+
+        if (this.privateKeyPath == null) {
+            this.privateKeyPath = this.dev ? "classpath:/alipay/dev/private.key" : "classpath:/alipay/private.key";
+        }
+
+        return this.privateKeyPath;
+
+    }
+
+    public String getPublicKeyPath() {
+
+        if (this.publicKeyPath == null) {
+            this.publicKeyPath = this.dev ? "classpath:/alipay/dev/public.key" : "classpath:/alipay/public.key";
+        }
+
+        return this.publicKeyPath;
+
+    }
 
     /**
      * 获取私钥字符串
@@ -84,7 +112,7 @@ public class AlipayProperties {
     public String getPrivateKey() {
 
         if (this.privateKey == null) {
-            this.privateKey = getKey(privateKeyPath);
+            this.privateKey = getKey(this.getPrivateKeyPath());
         }
         return this.privateKey;
     }
@@ -95,7 +123,7 @@ public class AlipayProperties {
     public String getPublicKey() {
 
         if (this.publicKey == null) {
-            this.publicKey = getKey(publicKeyPath);
+            this.publicKey = getKey(this.getPublicKeyPath());
         }
         return this.publicKey;
     }
@@ -104,7 +132,13 @@ public class AlipayProperties {
      * 获取网关地址
      */
     public String getTradeUrl() {
-        return this.dev ? AlipayConstant.DEV_TRADE_URL : AlipayConstant.PROD_TRADE_URL;
+
+        if (this.tradeUrl == null) {
+            this.tradeUrl = this.dev ? AlipayConstant.DEV_TRADE_URL : AlipayConstant.PROD_TRADE_URL;
+        }
+
+        return this.tradeUrl;
+
     }
 
     /**
